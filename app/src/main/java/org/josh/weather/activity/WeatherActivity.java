@@ -1,5 +1,6 @@
 package org.josh.weather.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.josh.weather.R;
+import org.josh.weather.services.AutoUpdateService;
 import org.josh.weather.util.HttpCallBackListener;
 import org.josh.weather.util.HttpUtil;
 import org.josh.weather.util.Utility;
@@ -20,7 +22,7 @@ import org.josh.weather.util.Utility;
 /**
  * Created by Josh on 2016/9/20.
  */
-public class WeatherActivity extends AppCompatActivity {
+public class WeatherActivity extends AppCompatActivity implements View.OnClickListener{
     private LinearLayout weatherInfoLayout;
     /*
     * 用于显示城市名
@@ -69,6 +71,10 @@ public class WeatherActivity extends AppCompatActivity {
         temp1Text = (TextView) findViewById(R.id.temp1);
         temp2Text = (TextView) findViewById(R.id.temp2);
         currentDateText = (TextView) findViewById(R.id.current_date);
+        switchCity = (Button) findViewById(R.id.switch_city);
+        refreshWeather = (Button) findViewById(R.id.refresh);
+        switchCity.setOnClickListener(this);
+        refreshWeather.setOnClickListener(this);
         String countyCode = getIntent().getStringExtra("county_code");
         if (!TextUtils.isEmpty(countyCode)){
             //有县级代号就去查询天气
@@ -78,6 +84,28 @@ public class WeatherActivity extends AppCompatActivity {
         }else {
             //没有县级代号就直接显示本地天气
             showWeather();
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.switch_city:
+                Intent intent = new Intent(this, ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity", true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.refresh:
+                publishText.setText("同步中。。。");
+                SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+                String weatherCode = pref.getString("weather_code", "");
+                if (!TextUtils.isEmpty(weatherCode)){
+                    queryWeatherCode(weatherCode);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -141,5 +169,9 @@ public class WeatherActivity extends AppCompatActivity {
         currentDateText.setText(prefs.getString("current_date", ""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
+
+
 }

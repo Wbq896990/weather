@@ -10,12 +10,26 @@
         android:layout_height="50dp"
         android:background="#484E61">
 
+        <Button
+            android:id="@+id/switch_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="切换"
+            android:textSize="24sp"/>
+
         <TextView
             android:id="@+id/city_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:textColor="#fff"
+            android:textSize="24sp"/>
+
+        <Button
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="刷新"
             android:textSize="24sp"/>
     </RelativeLayout>
     <RelativeLayout
